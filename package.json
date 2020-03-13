@@ -1,0 +1,21 @@
+{
+  "name": "srpjs",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "repository": "https://github.com/ex3ndr/srpjs.git",
+  "author": "Steve Korshakov <steve@korshakov.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/big-integer": "0.0.31",
+    "@types/jest": "25.1.4",
+    "@types/node": "13.9.0",
+    "@types/sha.js": "2.4.0",
+    "jest": "25.1.0",
+    "ts-jest": "25.2.1",
+    "typescript": "3.8.3"
+  },
+  "dependencies": {
+    "big-integer": "1.6.48",
+    "sha.js": "2.4.11"
+  }
+}

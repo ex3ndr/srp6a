@@ -10,9 +10,8 @@ describe('SRPEngine', () => {
     let engine: SRPEngine;
     beforeAll(() => {
         engine = SRPEngine.create(
-            DefaultParams.rfc5054_1024.prime,
-            DefaultParams.rfc5054_1024.modulo,
-            crypto.randomBytes,
+            DefaultParams.rfc5054_1024.N,
+            DefaultParams.rfc5054_1024.g,
             'sha-1'
         );
     });
@@ -194,9 +193,11 @@ describe('SRPEngine', () => {
             const testEngine = SRPEngine.create(
                 vector.N,
                 vector.g,
-                crypto.randomBytes,
                 vector.H === 'sha1' ? 'sha-1' : (vector.H === 'sha256' ? 'sha-256' : 'sha-512')
             );
+
+            // Test Key Size
+            expect(testEngine.Nbits).toBe(vector.size);
 
             // Test k - Multiplier
             expect(bigIntToBuffer(testEngine.k).toString('hex')).toBe(vector.k);

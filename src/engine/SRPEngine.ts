@@ -3,11 +3,6 @@ import { bufferToBigInt, bufferFromSpecHex, padLeft, bigIntToBuffer } from './co
 import { createSHA } from './createSHA';
 
 /**
- * Pseudorandom Number Genrator interface
- */
-export type PRNG = (size: number) => Buffer;
-
-/**
  * Hash function interface
  */
 export type Hash = (...src: (Buffer)[]) => Buffer;
@@ -18,7 +13,7 @@ export type Hash = (...src: (Buffer)[]) => Buffer;
  */
 export class SRPEngine {
 
-    static create(N: string, g: string, prng: PRNG, H: 'sha-1' | 'sha-256' | 'sha-512' | Hash) {
+    static create(N: string, g: string, H: 'sha-1' | 'sha-256' | 'sha-512' | Hash) {
         const bN = bufferFromSpecHex(N);
         const bg = bufferFromSpecHex(g);
         let h: Hash;
@@ -32,38 +27,30 @@ export class SRPEngine {
             bufferToBigInt(bN),
             bufferToBigInt(bg),
             k,
-            prng,
             h
         );
     }
 
     readonly N: BigInteger;
+    readonly Nbits: number;
+    readonly Nbytes: number;
     readonly g: BigInteger;
     readonly k: BigInteger;
-    readonly prng: PRNG;
     readonly H: Hash;
 
     constructor(
         N: BigInteger,
         g: BigInteger,
         k: BigInteger,
-        prng: PRNG,
         H: Hash
     ) {
         this.N = N;
+        this.Nbits = N.bitLength().toJSNumber();
+        this.Nbytes = Math.ceil(this.Nbits / 8);
         this.g = g;
         this.k = k;
-        this.prng = prng;
         this.H = H;
         Object.freeze(this);
-    }
-
-    /**
-     * Generate User's Salt
-     * @param size Size of a salt. Default is 16.
-     */
-    generateSalt = (size: number = 16) => {
-        return this.prng(size);
     }
 
     /**

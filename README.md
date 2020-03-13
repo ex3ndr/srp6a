@@ -1,5 +1,6 @@
 # SRP-6a implementation for js
 [![Version npm](https://img.shields.io/npm/v/srp6a.svg?logo=npm)](https://www.npmjs.com/package/srp6a)
+
 Modular implementation of [Secure Remote Password](http://srp.stanford.edu/) protocol for NodeJS/Browser/React Native environments. This library is inspired by NaCl crypto library and tries to provide same safety and simplicity to the user.
 
 This library is a little bit opioniated about how pefrom authentication process i believe that this process covers all cases and if it doesn't match your project, please, open an issue an i will implement an alternative way or suggest work-around.

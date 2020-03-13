@@ -90,5 +90,32 @@ const sessionKey = client.sessionKey;
 const sessionKey = server.sessionKey;
 ```
 
+# Advanced Configuration
+### Presets
+There are some built-in presets (please, make a PR for some other well-established parameters). To use a preset simply provide a name to SRP/SRPClient/SRPServer constructors as a first parameter.
+* ```'default'``` - Default safe parameters: 2048 bit group from RFC 5054 and SHA-256 for hashing.
+* ```'homekit'``` - HomeKit Accessory Protocol parameters: 3072 bit group from RFC 5054 and SHA-512 for hashing.
+
+### Manual Configuration
+If presets does not work for you, you can specify group and hashing algorithm manually:
+```js
+{ group: GROUP, hash: HASH }
+```
+Where `GROUP` could be one of:
+* RFC 5054 groups:
+  * 1024 bit: `'rfc5054_1024'`
+  * 1536 bit: `'rfc5054_1536'`
+  * 2048 bit: `'rfc5054_2048'`
+  * 3072 bit: `'rfc5054_3072'`
+  * 4096 bit: `'rfc5054_4096'`
+  * 6144 bit: `'rfc5054_6144'`
+  * 8192 bit: `'rfc5054_8192'`
+* Custom Group: ```{ N: string, g: string }```. Both numbers are in HEX format with any number of space symbols and formatting.
+Where `HASH` could be one of:
+* Built-in hashing:
+  * SHA-1: `'sha-1'`
+  * SHA-256: `'sha-256'`
+  * SHA-512: `'sha-512'`
+* Custom hashing function of type: ``` (...src: (Buffer)[]) => Buffer ```
 # License
 [MIT](LICENSE)

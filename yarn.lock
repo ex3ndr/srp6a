@@ -3254,6 +3254,11 @@ union-value@^1.0.0:
     is-extendable "^0.1.1"
     set-value "^2.0.1"
 
+universal-secure-random@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/universal-secure-random/-/universal-secure-random-0.0.1.tgz#2c5806dcb3b93b8f8c9296f51b59bf1290ed858d"
+  integrity sha512-jkma5UbC+GdE42OAeqFAj6fr9hL6fRoC4W3gxKT16LG4OL02yE48SK2Gprp5Z+xH6j3IEdXhtut1llbX542GKQ==
+
 unset-value@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/unset-value/-/unset-value-1.0.0.tgz#8376873f7d2335179ffb1e6fc3a8ed0dfc8ab559"

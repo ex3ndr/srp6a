@@ -5,9 +5,9 @@ import { SRP } from './SRP';
 
 describe('SRP', () => {
     it('should perform successful negotiation', () => {
-        const srp = new SRP('default', crypto.randomBytes);
-        const client = new SRPClient('default', crypto.randomBytes);
-        const server = new SRPServer('default', crypto.randomBytes);
+        const srp = new SRP('default');
+        const client = new SRPClient('default');
+        const server = new SRPServer('default');
 
         const username = 'randomKing';
         const password = 'pas$$word';
@@ -28,5 +28,10 @@ describe('SRP', () => {
 
         // Check session keys
         expect(server.sessionKey.toString('hex')).toBe(client.sessionKey.toString('hex'));
+    });
+
+    it('should generate seed', () => {
+        const srp = new SRP('default');
+        srp.generateSalt();
     });
 });

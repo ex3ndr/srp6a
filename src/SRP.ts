@@ -1,11 +1,7 @@
+import { randomBytes } from 'universal-secure-random';
 import { SRPParams, createSRPEngine } from './SRPParams';
 import { SRPEngine } from './engine/SRPEngine';
 import { bigIntToBuffer, bufferToBigInt } from './engine/convert';
-
-/**
- * Pseudorandom Number Genrator interface
- */
-export type PRNG = (size: number) => Buffer;
 
 export type SRPKeyPair = { secretKey: Buffer, publicKey: Buffer };
 
@@ -13,11 +9,9 @@ export type SRPSession = { sessionKey: Buffer, serverProof: Buffer, clientProof:
 
 export class SRP {
     private readonly _engine: SRPEngine;
-    private readonly _rnd: PRNG;
 
-    constructor(params: SRPParams, prng: PRNG) {
+    constructor(params: SRPParams) {
         this._engine = createSRPEngine(params);
-        this._rnd = prng;
     }
 
     /**
@@ -25,7 +19,7 @@ export class SRP {
      * @param length Length of salt. Default is 16.
      */
     generateSalt(length: number = 16) {
-        return this._rnd(length);
+        return randomBytes(length);
     }
 
     /**
@@ -55,7 +49,7 @@ export class SRP {
      * Generate Client Ephemeral Key
      */
     generateClientEphemeralKey(): SRPKeyPair {
-        const secretKey = this._rnd(this._engine.Nbytes);
+        const secretKey = randomBytes(this._engine.Nbytes);
         const publicKey = bigIntToBuffer(this._engine.computeA(bufferToBigInt(secretKey)));
         return {
             secretKey,
@@ -68,7 +62,7 @@ export class SRP {
      * @param verifier User's verifier
      */
     generateServerEphemeralKey(verifier: Buffer): SRPKeyPair {
-        const secretKey = this._rnd(this._engine.Nbytes);
+        const secretKey = randomBytes(this._engine.Nbytes);
         const publicKey = bigIntToBuffer(this._engine.computeB(bufferToBigInt(secretKey), bufferToBigInt(verifier)));
         return {
             secretKey,

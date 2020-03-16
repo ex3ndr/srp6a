@@ -1,5 +1,5 @@
 import { SRPParams } from './SRPParams';
-import { PRNG, SRP, SRPKeyPair } from './SRP';
+import { SRP, SRPKeyPair } from './SRP';
 import { constantTimeEq } from './utils/constantTimeEq';
 import { resetBuffer } from './utils/resetBuffer';
 
@@ -23,8 +23,8 @@ export class SRPClient {
     // State
     private _state: 'm0' | 'm1' | 'm2' | 'success' | 'failure' = 'm0';
 
-    constructor(params: SRPParams, prng: PRNG) {
-        this._srp = new SRP(params, prng);
+    constructor(params: SRPParams) {
+        this._srp = new SRP(params);
     }
 
     get state() {

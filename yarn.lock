@@ -332,16 +332,6 @@
   dependencies:
     type-detect "4.0.8"
 
-"@stablelib/hex@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@stablelib/hex/-/hex-1.0.0.tgz#9f2d21d412803e72a3bbc0ab4690e9bda0ca91cf"
-  integrity sha512-EJ9oGiuaFw/Y0cBATTxo73sgqOgdnSmZ9ftU9FND9SD51OM8wvAfS78uPy3oBNmLWc/sZK5twMbEFf/A4T2F8A==
-
-"@stablelib/utf8@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@stablelib/utf8/-/utf8-1.0.0.tgz#7c0c039b6d154da50326003ea92777ddc8f5db2c"
-  integrity sha512-Y8QWrK4T0yW0HMFfSI3ZaMHKV37q27hX5ilsmKV358x01mzYfj5fwIf2LjzTlF+UIemHEXSlSN9XJnv1ML4znQ==
-
 "@types/babel__core@^7.1.0":
   version "7.1.6"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.6.tgz#16ff42a5ae203c9af1c6e190ed1f30f83207b610"
@@ -415,7 +405,7 @@
     jest-diff "^25.1.0"
     pretty-format "^25.1.0"
 
-"@types/node@*":
+"@types/node@*", "@types/node@13.9.0":
   version "13.9.0"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-13.9.0.tgz#5b6ee7a77faacddd7de719017d0bc12f52f81589"
   integrity sha512-0ARSQootUG1RljH2HncpsY2TJBfGQIKOOi7kxzUY6z54ePu/ZD+wJA8zI2Q6v8rol2qpG/rvqsReco8zNMPvhQ==
@@ -3264,10 +3254,10 @@ union-value@^1.0.0:
     is-extendable "^0.1.1"
     set-value "^2.0.1"
 
-universal-secure-random@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/universal-secure-random/-/universal-secure-random-0.0.6.tgz#387fdef21fa90d2b6719d0ed6ad085a17f8b71b8"
-  integrity sha512-asSkItG+v9G0AE+hneXPkTaaVF/VSBbd99xp6XSNmLI5TGMfkYaRvWtat5JmZyCYtGirGjkc7Qio9zChHzP8TA==
+universal-secure-random@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/universal-secure-random/-/universal-secure-random-0.0.1.tgz#2c5806dcb3b93b8f8c9296f51b59bf1290ed858d"
+  integrity sha512-jkma5UbC+GdE42OAeqFAj6fr9hL6fRoC4W3gxKT16LG4OL02yE48SK2Gprp5Z+xH6j3IEdXhtut1llbX542GKQ==
 
 unset-value@^1.0.0:
   version "1.0.0"

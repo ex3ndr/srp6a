@@ -6,8 +6,7 @@
         "strict": true,
         "outDir": "./dist",
         "lib": [
-            "es2016",
-            "DOM"
+            "es2016"
         ],
         "declaration": true,
         "moduleResolution": "node",

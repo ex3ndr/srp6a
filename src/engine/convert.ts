@@ -1,36 +1,26 @@
 import bigInt, { BigInteger } from 'big-integer';
-import * as hex from '@stablelib/hex';
-import * as utf8 from '@stablelib/utf8';
 
-export function bigIntToArray(v: BigInteger): Uint8Array {
-    return Uint8Array.from(v.toArray(256).value);
+export function bigIntToBuffer(v: BigInteger) {
+    return Buffer.from(v.toArray(256).value);
 }
 
-export function arrayToBigInt(v: Uint8Array) {
+export function bufferToBigInt(v: Buffer) {
     return bigInt.fromArray([...v], 256, false);
 }
 
-export function padLeft(src: Uint8Array, length: number) {
+export function padLeft(src: Buffer, length: number) {
     var padding = length - src.length;
     if (padding < 0) {
         throw Error('Invalid padding');
     }
-    var result = new Uint8Array(length);
+    var result = Buffer.alloc(length);
     result.fill(0, 0, padding);
-    result.set(src, padding);
+    src.copy(result, padding);
     return result;
 }
 
-export function stringToArray(src: string) {
-    return utf8.encode(src);
-}
-
-export function arrayFromSpecHex(src: string): Uint8Array {
-    return hex.decode(src.replace(/\s/g, ''))
-}
-
-export function arrayToHex(src: Uint8Array) {
-    return hex.encode(src);
+export function bufferFromSpecHex(src: string) {
+    return Buffer.from(src.replace(/\s/g, ''), 'hex')
 }
 
 export function sanitizeHex(src: string) {

@@ -1,4 +1,4 @@
-export function constantTimeEq(a: Uint8Array, b: Uint8Array) {
+export function constantTimeEq(a: Buffer, b: Buffer) {
     if (a.length !== b.length) {
         return false;
     }

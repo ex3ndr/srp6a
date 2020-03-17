@@ -1,11 +1,11 @@
 import { randomBytes } from 'universal-secure-random';
 import { SRPParams, createSRPEngine } from './SRPParams';
 import { SRPEngine } from './engine/SRPEngine';
-import { bigIntToArray, arrayToBigInt } from './engine/convert';
+import { bigIntToBuffer, bufferToBigInt } from './engine/convert';
 
-export type SRPKeyPair = { secretKey: Uint8Array, publicKey: Uint8Array };
+export type SRPKeyPair = { secretKey: Buffer, publicKey: Buffer };
 
-export type SRPSession = { sessionKey: Uint8Array, serverProof: Uint8Array, clientProof: Uint8Array };
+export type SRPSession = { sessionKey: Buffer, serverProof: Buffer, clientProof: Buffer };
 
 export class SRP {
     private readonly _engine: SRPEngine;
@@ -28,9 +28,9 @@ export class SRP {
      * @param password Password
      * @param salt User's salt
      */
-    computePrivateKey(username: string, password: string, salt: Uint8Array): Uint8Array {
+    computePrivateKey(username: string, password: string, salt: Buffer): Buffer {
         let x = this._engine.computeX(username, password, salt);
-        return bigIntToArray(x); // No need to pad since it is used as bigint everywhere
+        return bigIntToBuffer(x); // No need to pad since it is used as bigint everywhere
     }
 
     /**
@@ -39,10 +39,10 @@ export class SRP {
      * @param password Password
      * @param salt User's salt
      */
-    computeVerifier(username: string, password: string, salt: Uint8Array): Uint8Array {
+    computeVerifier(username: string, password: string, salt: Buffer): Buffer {
         let x = this._engine.computeX(username, password, salt);
         let v = this._engine.computeV(x);
-        return bigIntToArray(v); // No need to pad since it is used as bigint everywhere
+        return bigIntToBuffer(v); // No need to pad since it is used as bigint everywhere
     }
 
     /**
@@ -50,7 +50,7 @@ export class SRP {
      */
     generateClientEphemeralKey(): SRPKeyPair {
         const secretKey = randomBytes(this._engine.Nbytes);
-        const publicKey = bigIntToArray(this._engine.computeA(arrayToBigInt(secretKey)));
+        const publicKey = bigIntToBuffer(this._engine.computeA(bufferToBigInt(secretKey)));
         return {
             secretKey,
             publicKey
@@ -61,9 +61,9 @@ export class SRP {
      * Generate Server Ephemeral Key
      * @param verifier User's verifier
      */
-    generateServerEphemeralKey(verifier: Uint8Array): SRPKeyPair {
+    generateServerEphemeralKey(verifier: Buffer): SRPKeyPair {
         const secretKey = randomBytes(this._engine.Nbytes);
-        const publicKey = bigIntToArray(this._engine.computeB(arrayToBigInt(secretKey), arrayToBigInt(verifier)));
+        const publicKey = bigIntToBuffer(this._engine.computeB(bufferToBigInt(secretKey), bufferToBigInt(verifier)));
         return {
             secretKey,
             publicKey
@@ -79,12 +79,12 @@ export class SRP {
      * @param privateKey User's private key
      * @returns Client Session or Null if something went wrong
      */
-    computeClientSession(key: SRPKeyPair, serverPublicKey: Uint8Array, username: string, salt: Uint8Array, privateKey: Uint8Array): SRPSession | null {
+    computeClientSession(key: SRPKeyPair, serverPublicKey: Buffer, username: string, salt: Buffer, privateKey: Buffer): SRPSession | null {
 
-        const a = arrayToBigInt(key.secretKey);
-        const A = arrayToBigInt(key.publicKey);
-        const B = arrayToBigInt(serverPublicKey);
-        const x = arrayToBigInt(privateKey);
+        const a = bufferToBigInt(key.secretKey);
+        const A = bufferToBigInt(key.publicKey);
+        const B = bufferToBigInt(serverPublicKey);
+        const x = bufferToBigInt(privateKey);
 
         // As in design: http://srp.stanford.edu/design.html
         if (B.mod(this._engine.N).eq(0)) {
@@ -108,17 +108,17 @@ export class SRP {
         const M2 = this._engine.computeServerProof(A, M, K);
 
         return {
-            sessionKey: bigIntToArray(S),
-            clientProof: bigIntToArray(M),
-            serverProof: bigIntToArray(M2)
+            sessionKey: bigIntToBuffer(S),
+            clientProof: bigIntToBuffer(M),
+            serverProof: bigIntToBuffer(M2)
         };
     }
 
-    computeServerSession(key: SRPKeyPair, clientPublicKey: Uint8Array, username: string, verifier: Uint8Array, salt: Uint8Array): SRPSession | null {
-        const b = arrayToBigInt(key.secretKey);
-        const B = arrayToBigInt(key.publicKey);
-        const A = arrayToBigInt(clientPublicKey);
-        const v = arrayToBigInt(verifier);
+    computeServerSession(key: SRPKeyPair, clientPublicKey: Buffer, username: string, verifier: Buffer, salt: Buffer): SRPSession | null {
+        const b = bufferToBigInt(key.secretKey);
+        const B = bufferToBigInt(key.publicKey);
+        const A = bufferToBigInt(clientPublicKey);
+        const v = bufferToBigInt(verifier);
 
         // As in design: http://srp.stanford.edu/design.html
         if (A.mod(this._engine.N).eq(0)) {
@@ -142,9 +142,9 @@ export class SRP {
         const M2 = this._engine.computeServerProof(A, M, K);
 
         return {
-            sessionKey: bigIntToArray(S),
-            clientProof: bigIntToArray(M),
-            serverProof: bigIntToArray(M2)
+            sessionKey: bigIntToBuffer(S),
+            clientProof: bigIntToBuffer(M),
+            serverProof: bigIntToBuffer(M2)
         };
     }
 }

@@ -1,11 +1,11 @@
 import bigint, { BigInteger } from 'big-integer';
-import { arrayToBigInt, arrayFromSpecHex, padLeft, bigIntToArray, stringToArray } from './convert';
+import { bufferToBigInt, bufferFromSpecHex, padLeft, bigIntToBuffer } from './convert';
 import { createSHA } from './createSHA';
 
 /**
  * Hash function interface
  */
-export type Hash = (...src: (Uint8Array)[]) => Uint8Array;
+export type Hash = (...src: (Buffer)[]) => Buffer;
 
 /**
  * Low Level SRP Engine that implements all required math for 
@@ -14,18 +14,18 @@ export type Hash = (...src: (Uint8Array)[]) => Uint8Array;
 export class SRPEngine {
 
     static create(N: string, g: string, H: 'sha-1' | 'sha-256' | 'sha-512' | Hash) {
-        const bN = arrayFromSpecHex(N);
-        const bg = arrayFromSpecHex(g);
+        const bN = bufferFromSpecHex(N);
+        const bg = bufferFromSpecHex(g);
         let h: Hash;
         if (typeof H === 'string') {
             h = createSHA(H);
         } else {
             h = H;
         }
-        const k = arrayToBigInt(h(bN, padLeft(bg, bN.length)));
+        const k = bufferToBigInt(h(bN, padLeft(bg, bN.length)));
         return new SRPEngine(
-            arrayToBigInt(bN),
-            arrayToBigInt(bg),
+            bufferToBigInt(bN),
+            bufferToBigInt(bg),
             k,
             h
         );
@@ -59,7 +59,7 @@ export class SRPEngine {
      * @param p User Password
      * @param s User Salt
      */
-    computeX(I: string, p: string, s: Uint8Array): BigInteger {
+    computeX(I: string, p: string, s: Buffer): BigInteger {
         const H = this._H;
 
         // x = H(s, H(I | ':' | p))  (s is chosen randomly)
@@ -173,7 +173,7 @@ export class SRPEngine {
      * @param B Server public key
      * @param K Strong Session Key
      */
-    computeClientProof = (I: string, s: Uint8Array, A: BigInteger, B: BigInteger, K: BigInteger) => {
+    computeClientProof = (I: string, s: Buffer, A: BigInteger, B: BigInteger, K: BigInteger) => {
         const H = this._H;
         const N = this.N;
         const g = this.g;
@@ -194,18 +194,18 @@ export class SRPEngine {
     /**
      * Hashing wrapper
      */
-    private _H = (...src: (BigInteger | Uint8Array | string)[]) => {
+    private _H = (...src: (BigInteger | Buffer | string)[]) => {
         let mapped = src.map((i) => {
             if (typeof i === 'string') {
-                return stringToArray(i);
-            } else if (i instanceof Uint8Array) {
+                return Buffer.from(i, 'utf-8');
+            } else if (Buffer.isBuffer(i)) {
                 return i;
             } else if (bigint.isInstance(i)) {
-                return bigIntToArray(i);
+                return bigIntToBuffer(i);
             } else {
                 throw Error('Invalid data');
             }
         })
-        return arrayToBigInt(this.H(...mapped));
+        return bufferToBigInt(this.H(...mapped));
     }
 }

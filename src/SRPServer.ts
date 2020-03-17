@@ -7,17 +7,17 @@ export class SRPServer {
 
     // Credentials
     private _username!: string;
-    private _verifier!: Buffer;
-    private _salt!: Buffer;
+    private _verifier!: Uint8Array;
+    private _salt!: Uint8Array;
 
     // Keys
     private _ephemeralKey!: SRPKeyPair;
-    private _clientKey!: Buffer;
+    private _clientKey!: Uint8Array;
 
     // Session
-    private _proof!: Buffer;
-    private _clientProof!: Buffer;
-    private _sessionKey!: Buffer;
+    private _proof!: Uint8Array;
+    private _clientProof!: Uint8Array;
+    private _sessionKey!: Uint8Array;
 
     private _state: 'm0' | 'm1' | 'm2' | 'success' | 'failure' = 'm0';
 
@@ -50,7 +50,7 @@ export class SRPServer {
         return this._sessionKey;
     }
 
-    setCredentials(username: string, verifier: Buffer, salt: Buffer): boolean {
+    setCredentials(username: string, verifier: Uint8Array, salt: Uint8Array): boolean {
         if (this._state !== 'm0') {
             throw Error('Invalid state. Expected: m0, got: ' + this._state);
         }
@@ -62,7 +62,7 @@ export class SRPServer {
         return true;
     }
 
-    setClientKey(publicKey: Buffer): boolean {
+    setClientKey(publicKey: Uint8Array): boolean {
         if (this._state !== 'm1') {
             throw Error('Invalid state. Expected: m1, got: ' + this._state);
         }
@@ -86,7 +86,7 @@ export class SRPServer {
         return true;
     }
 
-    validateProof(proof: Buffer): boolean {
+    validateProof(proof: Uint8Array): boolean {
         if (this._state !== 'm2') {
             throw Error('Invalid state. Expected: m2, got: ' + this._state);
         }

@@ -1,7 +1,7 @@
 import { SRPServer } from './SRPServer';
 import { SRPClient } from './SRPClient';
-import crypto from 'crypto';
 import { SRP } from './SRP';
+import { arrayToHex } from './engine/convert';
 
 describe('SRP', () => {
     it('should perform successful negotiation', () => {
@@ -27,7 +27,7 @@ describe('SRP', () => {
         expect(client.validateProof(server.proof)).toBe(true);
 
         // Check session keys
-        expect(server.sessionKey.toString('hex')).toBe(client.sessionKey.toString('hex'));
+        expect(arrayToHex(server.sessionKey)).toBe(arrayToHex(client.sessionKey));
     });
 
     it('should generate seed', () => {

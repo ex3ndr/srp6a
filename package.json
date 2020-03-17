@@ -8,17 +8,18 @@
   "devDependencies": {
     "@types/big-integer": "0.0.31",
     "@types/jest": "25.1.4",
-    "@types/node": "13.9.0",
     "@types/sha.js": "2.4.0",
     "jest": "25.1.0",
     "ts-jest": "25.2.1",
     "typescript": "3.8.3",
-    "universal-secure-random": "^0.0.1"
+    "universal-secure-random": "^0.0.6"
   },
   "peerDependencies": {
     "universal-secure-random": "*"
   },
   "dependencies": {
+    "@stablelib/hex": "^1.0.0",
+    "@stablelib/utf8": "^1.0.0",
     "big-integer": "1.6.48",
     "sha.js": "2.4.11"
   }

@@ -405,6 +405,11 @@
     jest-diff "^25.1.0"
     pretty-format "^25.1.0"
 
+"@types/jsbn@^1.2.29":
+  version "1.2.29"
+  resolved "https://registry.yarnpkg.com/@types/jsbn/-/jsbn-1.2.29.tgz#28229bc0262c704a1506c3ed69a7d7e115bd7832"
+  integrity sha512-2dVz9LTEGWVj9Ov9zaDnpvqHFV+W4bXtU0EUEGAzWfdRNO3dlUuosdHpENI6/oQW+Kejn0hAjk6P/czs9h/hvg==
+
 "@types/node@*", "@types/node@13.9.0":
   version "13.9.0"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-13.9.0.tgz#5b6ee7a77faacddd7de719017d0bc12f52f81589"
@@ -2059,6 +2064,11 @@ js-yaml@^3.13.1:
   dependencies:
     argparse "^1.0.7"
     esprima "^4.0.0"
+
+jsbn@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-1.1.0.tgz#b01307cb29b618a1ed26ec79e911f803c4da0040"
+  integrity sha1-sBMHyym2GKHtJux56RH4A8TaAEA=
 
 jsbn@~0.1.0:
   version "0.1.1"

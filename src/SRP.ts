@@ -1,7 +1,7 @@
+import { BigInt } from './utils/BigInt';
 import { randomBytes } from 'universal-secure-random';
 import { SRPParams, createSRPEngine } from './SRPParams';
 import { SRPEngine } from './engine/SRPEngine';
-import { bigIntToBuffer, bufferToBigInt } from './engine/convert';
 
 export type SRPKeyPair = { secretKey: Buffer, publicKey: Buffer };
 
@@ -30,7 +30,7 @@ export class SRP {
      */
     computePrivateKey(username: string, password: string, salt: Buffer): Buffer {
         let x = this._engine.computeX(username, password, salt);
-        return bigIntToBuffer(x); // No need to pad since it is used as bigint everywhere
+        return x.toBuffer(); // No need to pad since it is used as bigint everywhere
     }
 
     /**
@@ -42,7 +42,7 @@ export class SRP {
     computeVerifier(username: string, password: string, salt: Buffer): Buffer {
         let x = this._engine.computeX(username, password, salt);
         let v = this._engine.computeV(x);
-        return bigIntToBuffer(v); // No need to pad since it is used as bigint everywhere
+        return v.toBuffer(); // No need to pad since it is used as bigint everywhere
     }
 
     /**
@@ -50,7 +50,7 @@ export class SRP {
      */
     generateClientEphemeralKey(): SRPKeyPair {
         const secretKey = randomBytes(this._engine.Nbytes);
-        const publicKey = bigIntToBuffer(this._engine.computeA(bufferToBigInt(secretKey)));
+        const publicKey = this._engine.computeA(BigInt.fromBuffer(secretKey)).toBuffer();
         return {
             secretKey,
             publicKey
@@ -63,7 +63,7 @@ export class SRP {
      */
     generateServerEphemeralKey(verifier: Buffer): SRPKeyPair {
         const secretKey = randomBytes(this._engine.Nbytes);
-        const publicKey = bigIntToBuffer(this._engine.computeB(bufferToBigInt(secretKey), bufferToBigInt(verifier)));
+        const publicKey = this._engine.computeB(BigInt.fromBuffer(secretKey), BigInt.fromBuffer((verifier))).toBuffer();
         return {
             secretKey,
             publicKey
@@ -81,20 +81,20 @@ export class SRP {
      */
     computeClientSession(key: SRPKeyPair, serverPublicKey: Buffer, username: string, salt: Buffer, privateKey: Buffer): SRPSession | null {
 
-        const a = bufferToBigInt(key.secretKey);
-        const A = bufferToBigInt(key.publicKey);
-        const B = bufferToBigInt(serverPublicKey);
-        const x = bufferToBigInt(privateKey);
+        const a = BigInt.fromBuffer(key.secretKey);
+        const A = BigInt.fromBuffer(key.publicKey);
+        const B = BigInt.fromBuffer(serverPublicKey);
+        const x = BigInt.fromBuffer(privateKey);
 
         // As in design: http://srp.stanford.edu/design.html
-        if (B.mod(this._engine.N).eq(0)) {
+        if (B.mod(this._engine.N).eq(BigInt.ZERO)) {
             return null;
         }
 
         // 1. Random scrambling parameter
         const u = this._engine.computeU(A, B);
         // As in design: http://srp.stanford.edu/design.html
-        if (u.mod(this._engine.N).eq(0)) {
+        if (u.mod(this._engine.N).eq(BigInt.ZERO)) {
             return null;
         }
 
@@ -108,27 +108,27 @@ export class SRP {
         const M2 = this._engine.computeServerProof(A, M, K);
 
         return {
-            sessionKey: bigIntToBuffer(S),
-            clientProof: bigIntToBuffer(M),
-            serverProof: bigIntToBuffer(M2)
+            sessionKey: S.toBuffer(),
+            clientProof: M.toBuffer(),
+            serverProof: M2.toBuffer()
         };
     }
 
     computeServerSession(key: SRPKeyPair, clientPublicKey: Buffer, username: string, verifier: Buffer, salt: Buffer): SRPSession | null {
-        const b = bufferToBigInt(key.secretKey);
-        const B = bufferToBigInt(key.publicKey);
-        const A = bufferToBigInt(clientPublicKey);
-        const v = bufferToBigInt(verifier);
+        const b = BigInt.fromBuffer(key.secretKey);
+        const B = BigInt.fromBuffer(key.publicKey);
+        const A = BigInt.fromBuffer(clientPublicKey);
+        const v = BigInt.fromBuffer(verifier);
 
         // As in design: http://srp.stanford.edu/design.html
-        if (A.mod(this._engine.N).eq(0)) {
+        if (A.mod(this._engine.N).eq(BigInt.ZERO)) {
             return null;
         }
 
         // 1. Random scrambling parameter
         const u = this._engine.computeU(A, B);
         // As in design: http://srp.stanford.edu/design.html
-        if (u.mod(this._engine.N).eq(0)) {
+        if (u.mod(this._engine.N).eq(BigInt.ZERO)) {
             return null;
         }
 
@@ -142,9 +142,9 @@ export class SRP {
         const M2 = this._engine.computeServerProof(A, M, K);
 
         return {
-            sessionKey: bigIntToBuffer(S),
-            clientProof: bigIntToBuffer(M),
-            serverProof: bigIntToBuffer(M2)
+            sessionKey: S.toBuffer(),
+            clientProof: M.toBuffer(),
+            serverProof: M2.toBuffer()
         };
     }
 }

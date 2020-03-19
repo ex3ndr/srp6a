@@ -1,5 +1,5 @@
-import bigint, { BigInteger } from 'big-integer';
-import { bufferToBigInt, bufferFromSpecHex, padLeft, bigIntToBuffer } from './convert';
+import { BigInt } from './../utils/BigInt';
+import { bufferFromSpecHex, padLeft } from './convert';
 import { createSHA } from './createSHA';
 
 /**
@@ -22,30 +22,32 @@ export class SRPEngine {
         } else {
             h = H;
         }
-        const k = bufferToBigInt(h(bN, padLeft(bg, bN.length)));
+        const k = BigInt.fromBuffer(h(bN, padLeft(bg, bN.length)));
         return new SRPEngine(
-            bufferToBigInt(bN),
-            bufferToBigInt(bg),
+            BigInt.fromBuffer(bN),
+            bN.length * 8,
+            BigInt.fromBuffer(bg),
             k,
             h
         );
     }
 
-    readonly N: BigInteger;
+    readonly N: BigInt;
     readonly Nbits: number;
     readonly Nbytes: number;
-    readonly g: BigInteger;
-    readonly k: BigInteger;
+    readonly g: BigInt;
+    readonly k: BigInt;
     readonly H: Hash;
 
     constructor(
-        N: BigInteger,
-        g: BigInteger,
-        k: BigInteger,
+        N: BigInt,
+        NBits: number,
+        g: BigInt,
+        k: BigInt,
         H: Hash
     ) {
         this.N = N;
-        this.Nbits = N.bitLength().toJSNumber();
+        this.Nbits = NBits;
         this.Nbytes = Math.ceil(this.Nbits / 8);
         this.g = g;
         this.k = k;
@@ -59,7 +61,7 @@ export class SRPEngine {
      * @param p User Password
      * @param s User Salt
      */
-    computeX(I: string, p: string, s: Buffer): BigInteger {
+    computeX(I: string, p: string, s: Buffer): BigInt {
         const H = this._H;
 
         // x = H(s, H(I | ':' | p))  (s is chosen randomly)
@@ -72,7 +74,7 @@ export class SRPEngine {
      * Computing v - Verifier
      * @param x Private Key
      */
-    computeV(x: BigInteger): BigInteger {
+    computeV(x: BigInt): BigInt {
         const N = this.N;
         const g = this.g;
 
@@ -85,7 +87,7 @@ export class SRPEngine {
      * @param v verifier
      * @param b secret key
      */
-    computeB(b: BigInteger, v: BigInteger): BigInteger {
+    computeB(b: BigInt, v: BigInt): BigInt {
         const N = this.N;
         const g = this.g;
         const k = this.k;
@@ -98,7 +100,7 @@ export class SRPEngine {
      * Compute A - client public key
      * @param a secret key
      */
-    computeA(a: BigInteger): BigInteger {
+    computeA(a: BigInt): BigInt {
         const N = this.N;
         const g = this.g;
 
@@ -111,7 +113,7 @@ export class SRPEngine {
      * @param A Client public key
      * @param B Server public key
      */
-    computeU(A: BigInteger, B: BigInteger): BigInteger {
+    computeU(A: BigInt, B: BigInt): BigInt {
         const N = this.N;
         const H = this._H;
 
@@ -126,7 +128,7 @@ export class SRPEngine {
      * @param x Private key
      * @param u Random Scrambling Parameter
      */
-    computeClientS(a: BigInteger, B: BigInteger, x: BigInteger, u: BigInteger) {
+    computeClientS(a: BigInt, B: BigInt, x: BigInt, u: BigInt): BigInt {
 
         const N = this.N;
         const g = this.g;
@@ -150,7 +152,7 @@ export class SRPEngine {
      * @param v Verifier
      * @param u Random Scrambling Parameter
      */
-    computeServerS(b: BigInteger, A: BigInteger, v: BigInteger, u: BigInteger) {
+    computeServerS(b: BigInt, A: BigInt, v: BigInt, u: BigInt): BigInt {
         const N = this.N;
 
         // S = (Av^u) ^ b
@@ -161,7 +163,7 @@ export class SRPEngine {
      * Compute K - Strong Session Key
      * @param S Session key
      */
-    computeK = (S: BigInteger) => {
+    computeK = (S: BigInt): BigInt => {
         return this._H(S);
     }
 
@@ -173,7 +175,7 @@ export class SRPEngine {
      * @param B Server public key
      * @param K Strong Session Key
      */
-    computeClientProof = (I: string, s: Buffer, A: BigInteger, B: BigInteger, K: BigInteger) => {
+    computeClientProof = (I: string, s: Buffer, A: BigInt, B: BigInt, K: BigInt): BigInt => {
         const H = this._H;
         const N = this.N;
         const g = this.g;
@@ -186,7 +188,7 @@ export class SRPEngine {
      * @param M Client proof
      * @param K Strong Session Key
      */
-    computeServerProof = (A: BigInteger, M: BigInteger, K: BigInteger) => {
+    computeServerProof = (A: BigInt, M: BigInt, K: BigInt): BigInt => {
         const H = this._H;
         return H(A, M, K);
     }
@@ -194,18 +196,18 @@ export class SRPEngine {
     /**
      * Hashing wrapper
      */
-    private _H = (...src: (BigInteger | Buffer | string)[]) => {
+    private _H = (...src: (BigInt | Buffer | string)[]): BigInt => {
         let mapped = src.map((i) => {
             if (typeof i === 'string') {
                 return Buffer.from(i, 'utf-8');
             } else if (Buffer.isBuffer(i)) {
                 return i;
-            } else if (bigint.isInstance(i)) {
-                return bigIntToBuffer(i);
+            } else if (i instanceof BigInt) {
+                return i.toBuffer();
             } else {
                 throw Error('Invalid data');
             }
         })
-        return bufferToBigInt(this.H(...mapped));
+        return BigInt.fromBuffer(this.H(...mapped));
     }
 }

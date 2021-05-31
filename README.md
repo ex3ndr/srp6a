@@ -19,14 +19,14 @@ yarn add srp6a
 ```
 
 ## Configuration
-To use this library you have to configure SRP parameters and provide secure pseudorandom number generator. 
-For simplicity you can pick default parameters and default nodejs random number generator:
+To use this library you have to configure SRP parameters.
+For simplicity you can use the default parameters:
 
 ```js
 import { SRP } from 'srp6a';
 import crypto from 'crypto';
 
-const srp = new SRP('default', crypto.randomBytes);
+const srp = new SRP('default');
 ```
 
 ## Compute Verifier
@@ -40,12 +40,12 @@ const verifier = srp.computeVerifier(username, password, salt);
 ```
 
 ## Authentication process
-For authentication there are 'SRPClient' and 'SRPServer' classes. **Beware: they are can't be reused!**. After failed or successful negotiation any function call will result in exception being thrown.
-If any function return false then 'SRPClient'/'SRPServer' will turn into failed state and could not be used anymore and you have to start new authentication session.
+For authentication there are 'SRPClient' and 'SRPServer' classes. **Beware: they can't be reused!**. After failed or successful negotiation any function call will result in exception being thrown.
+If any function returns false then 'SRPClient'/'SRPServer' will turn into failed state and will not be usable anymore. You will have to start new authentication session.
 
 ```js
-const srpClient = new SRPClient('default', crypto.randomBytes);
-const srpServer = new SRPServer('default', crypto.randomBytes);
+const srpClient = new SRPClient('default');
+const srpServer = new SRPServer('default');
 ```
 
 ### Set Credentials
@@ -60,7 +60,7 @@ if (!server.setCredentials(username, verifier, salt)) {
 ```
 
 ### Exchange Ephemeral Keys
-After setting credentials new ephemeral keys are generated and they became available in `publicKey` property. **This property will throw error if you haven't set credentials.**
+After setting credentials new ephemeral keys are generated, and they became available in `publicKey` property. **This property will throw an error if you haven't set credentials.**
 ```js
 if (!client.setServerKey(server.publicKey)) {
   throw Error('Unable to set server public key');
@@ -70,10 +70,8 @@ if (!server.setClientKey(client.publicKey)) {
 }
 ```
 
-
-
 ### Validate Proofs
-To get an acccess to Session Key you have to validate proofs. Server-side proof is **not** available untill you successfully validated client one.
+To get an acccess to Session Key you have to validate proofs. Server-side proof is **not** available until you have successfully validated client one.
 ```js
 if (!server.validateProof(client.proof)) {
     throw Error('Invalid client proof');
@@ -99,7 +97,7 @@ There are some built-in presets (please, make a PR for some other well-establish
 * ```'homekit'``` - HomeKit Accessory Protocol parameters: 3072 bit group from RFC 5054 and SHA-512 for hashing.
 
 ### Manual Configuration
-If presets does not work for you, you can specify group and hashing algorithm manually:
+If the presets does not work for you, you can specify group and hashing algorithm manually:
 ```js
 { group: GROUP, hash: HASH }
 ```
